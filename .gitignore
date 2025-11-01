@@ -1,0 +1,57 @@
+# Local Environment Files
+**/appsettings.*.json
+
+# Visual Studio and project files
+**/launchSettings.json
+
+# Visual Studio files
+.vs/
+*.suo
+*.user
+*.bak
+*.log
+*.obj
+*.pdb
+*.ilk
+*.aps
+*.ncb
+*.bsc
+*.sbr
+*.res
+*.pch
+*.ipch
+*.idb
+*.iobj
+*.tlog
+*.lastbuildstate
+*.intellisense.vc.db
+*.sdf
+*.cache
+*.db
+*.VC.db
+*.opensdf
+*.opendb
+
+# Build results
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+build/
+bin/
+obj/
+
+# Solution and project files
+*.sln.docstates
+*.csproj.user
+*.vcxproj.user
+*.filters
+*.userprefs
+
+# NuGet packages
+packages/
+*.nupkg
+
+# Temporary files
+temp/
+tmp/
