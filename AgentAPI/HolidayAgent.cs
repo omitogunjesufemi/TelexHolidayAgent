@@ -16,6 +16,9 @@ namespace AgentAPI
                 return Task.FromCanceled<A2AResponse>(cancellationToken);
 
             var messageText = messageSendParams.Message.Parts.OfType<TextPart>().First().Text;
+
+            var responseText = $"Agent received: '{messageText}'. Working on your holiday request...";
+
             var message = new AgentMessage()
             {
                 Role = MessageRole.Agent,

@@ -1,5 +1,9 @@
 using A2A;
 using A2A.AspNetCore;
+using Microsoft.Extensions.DependencyInjection;
+using System.Threading;
+using Microsoft.AspNetCore.Mvc;
+using System.Text.Json;
 
 namespace AgentAPI
 {
@@ -9,18 +13,35 @@ namespace AgentAPI
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            builder.Logging.ClearProviders().AddConsole();
+            builder.Logging.SetMinimumLevel(LogLevel.Debug);
+            builder.Services.AddLogging();
+
+            builder.Services.AddSingleton<HolidayAgent>();
+            builder.Services.AddSingleton<ITaskManager, TaskManager>();
+
             var app = builder.Build();
 
-            app.UseHttpsRedirection();
-            app.MapGet("/health", () => Results.Ok(new { Status = "Healthy", Timestamp = DateTimeOffset.UtcNow }));
 
-            var taskManager = new TaskManager();
-            var holidayAgent = new HolidayAgent();
+            var taskManager = app.Services.GetRequiredService<ITaskManager>();
+            var holidayAgent = app.Services.GetRequiredService<HolidayAgent>();
             holidayAgent.Attach(taskManager);
-            
+
             app.MapA2A(taskManager, "/holiday");
-            app.MapWellKnownAgentCard(taskManager, "/holiday");
-            app.MapHttpA2A(taskManager, "/holiday");
+            app.MapGet("/health", () => Results.Ok(new { Status = "Healthy", Timestamp = DateTimeOffset.UtcNow }));
+            app.MapGet("/.well-known/agent.json", (
+                [FromServices] ITaskManager manager,
+                HttpContext context,
+                CancellationToken cancellationToken) =>
+            {
+                var agentUri = $"{context.Request.Scheme}://{context.Request.Host}/holiday";
+                var agentCard = manager.OnAgentCardQuery.Invoke(agentUri, cancellationToken);
+
+                var options = new JsonSerializerOptions { WriteIndented = true };
+                context.Response.ContentType = "application/json";
+
+                context.Response.WriteAsync(JsonSerializer.Serialize(agentCard, options));
+            });
 
             app.Run();
         }
