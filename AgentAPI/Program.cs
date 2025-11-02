@@ -40,7 +40,7 @@ namespace AgentAPI
                 var options = new JsonSerializerOptions { WriteIndented = true };
                 context.Response.ContentType = "application/json";
 
-                context.Response.WriteAsync(JsonSerializer.Serialize(agentCard, options));
+                context.Response.WriteAsync(JsonSerializer.Serialize(agentCard.Result, options));
             });
 
             app.Run();
