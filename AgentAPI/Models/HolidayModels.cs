@@ -13,14 +13,6 @@
         public string CountryCode { get; set; }
     }
 
-    public class PublicHolidayDto
-    {
-        public DateTime Date { get; set; }
-        public string LocalName { get; set; }
-        public string Name { get; set; }
-        public string CountryCode { get; set; }
-    }
-
     public class HolidayCache
     {
         private readonly Dictionary<string, List<PublicHoliday>> _holidayCache = new();

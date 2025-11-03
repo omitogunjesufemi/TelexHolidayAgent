@@ -13,7 +13,7 @@
         {
             try
             {
-                var response = await _httpClient.GetAsync("/AvailableCountries");
+                var response = await _httpClient.GetAsync("/api/v3/AvailableCountries");
                 response.EnsureSuccessStatusCode();
                 var content = await response.Content.ReadAsStringAsync();
                 return content;
@@ -51,7 +51,7 @@
         {
             try
             {
-                var response = await _httpClient.GetAsync($"/PublicHolidays/{year}/{countryCode}");
+                var response = await _httpClient.GetAsync($"/api/v3/PublicHolidays/{year}/{countryCode}");
                 response.EnsureSuccessStatusCode();
                 var content = await response.Content.ReadAsStringAsync();
                 return content;

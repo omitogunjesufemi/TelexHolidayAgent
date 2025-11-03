@@ -58,7 +58,7 @@ namespace AgentAPI.Services
             var holidays = _dataStore.GetCachedHolidays(countryCode, currentYear);
             
             string responseText;
-            
+
             StringBuilder sb = new StringBuilder();
             foreach (var holiday in holidays)
             {
@@ -67,7 +67,7 @@ namespace AgentAPI.Services
 
             if (sb != null)
             {
-                responseText = $"Next Holidays in {countryCode}\r\n" + sb;
+                responseText = $"Next Holidays in {GetCountryName(countryCode).Result}\r\n" + sb;
             }
             else
             {
@@ -81,6 +81,10 @@ namespace AgentAPI.Services
 
         private async Task FetchAndCacheHolidays(string countryCode, int year)
         {
+            var countryName = GetCountryName(countryCode);
+            if ( countryName == null)
+                return;
+
             var response = await _holidayAPI.GetNextPublicHoliday(countryCode);
             var holidays = JsonConvert.DeserializeObject<List<PublicHoliday>>(response);
             holidays = holidays?.Select(holiday => new PublicHoliday
@@ -91,6 +95,25 @@ namespace AgentAPI.Services
             }).ToList();
 
             _dataStore.CacheHolidays(year, countryCode, holidays);
+        }
+
+        private async Task<string>? GetCountryName(string countryCode)
+        {
+            var response = await _holidayAPI.GetAvailableCountryAsync();
+            var countries = JsonConvert.DeserializeObject<List<CountriesAvailable>>(response);
+            countries = countries.Select(c => new CountriesAvailable
+            {
+                Name = c.Name,
+                CountryCode = c.CountryCode
+            }).ToList();
+
+            foreach (var country in countries)
+            {
+                if (country.CountryCode == countryCode.ToUpper())
+                    return country.Name;
+            }
+
+            return null;
         }
 
         private Task<AgentCard> GetAgentCardAsync(string agentUrl, CancellationToken cancellationToken)
