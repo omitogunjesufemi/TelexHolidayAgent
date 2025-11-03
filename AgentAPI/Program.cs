@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using System.Threading;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
+using AgentAPI.Services;
 
 namespace AgentAPI
 {
@@ -20,6 +21,11 @@ namespace AgentAPI
             builder.Services.AddSingleton<HolidayAgent>();
             builder.Services.AddSingleton<ITaskManager, TaskManager>();
 
+            builder.Services.AddHttpClient<ApiClient>(client =>
+            {
+                client.BaseAddress = new Uri("https://date.nager.at/");
+            });
+
             var app = builder.Build();
 
 
@@ -29,7 +35,7 @@ namespace AgentAPI
 
             app.MapA2A(taskManager, "/holiday");
             app.MapGet("/health", () => Results.Ok(new { Status = "Healthy", Timestamp = DateTimeOffset.UtcNow }));
-            app.MapGet("/.well-known/agent.json", (
+            app.MapGet("/.well-known/agent.json", async (
                 [FromServices] ITaskManager manager,
                 HttpContext context,
                 CancellationToken cancellationToken) =>
@@ -40,7 +46,7 @@ namespace AgentAPI
                 var options = new JsonSerializerOptions { WriteIndented = true };
                 context.Response.ContentType = "application/json";
 
-                context.Response.WriteAsync(JsonSerializer.Serialize(agentCard.Result, options));
+                await context.Response.WriteAsync(JsonSerializer.Serialize(agentCard.Result, options));
             });
 
             app.Run();
