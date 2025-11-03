@@ -20,11 +20,11 @@
             }
             catch (HttpRequestException hEx)
             {
-                return $"Error fetching cat fact: {hEx.Message}";
+                return $"Error fetching: {hEx.Message}";
             }
             catch (Exception ex)
             {
-                return $"Error fetching cat fact: {ex.Message}";
+                return $"Error fetching: {ex.Message}";
             }
         }
 
@@ -39,11 +39,11 @@
             }
             catch (HttpRequestException hEx)
             {
-                return $"Error fetching cat fact: {hEx.Message}";
+                return $"Error fetching: {hEx.Message}";
             }
             catch (Exception ex)
             {
-                return $"Error fetching cat fact: {ex.Message}";
+                return $"Error fetching: {ex.Message}";
             }
         }
 
@@ -58,11 +58,11 @@
             }
             catch (HttpRequestException hEx)
             {
-                return $"Error fetching cat fact: {hEx.Message}";
+                return $"Error fetching: {hEx.Message}";
             }
             catch (Exception ex)
             {
-                return $"Error fetching cat fact: {ex.Message}";
+                return $"Error fetching: {ex.Message}";
             }
         }
     }
